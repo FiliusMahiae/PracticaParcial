@@ -1,7 +1,5 @@
-require("dotenv").config(); // Cargar variables de entorno desde .env
-
+require("dotenv").config();
 const express = require("express");
-const userRoutes = require("./routes/userRoutes");
 const dbConnect = require("./config/db");
 
 const app = express();
@@ -9,8 +7,8 @@ const app = express();
 // Middleware para parsear JSON
 app.use(express.json());
 
-// Montar rutas
-app.use("/api/user", userRoutes);
+// Montar las rutas dinámicas bajo el prefijo /api
+app.use("/api", require("./routes"));
 
 // Conectar a la BBDD y arrancar el servidor
 dbConnect().then(() => {

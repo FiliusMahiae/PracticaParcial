@@ -1,5 +1,5 @@
 ### Registro de usuario válido
-POST http://localhost:8080/api/user/register
+POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
@@ -8,7 +8,7 @@ Content-Type: application/json
 }
 
 ### Registro de usuario con email inválido (debe retornar 422)
-POST http://localhost:8080/api/user/register
+POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
@@ -17,7 +17,7 @@ Content-Type: application/json
 }
 
 ### Registro de usuario con contraseña corta (debe retornar 422)
-POST http://localhost:8080/api/user/register
+POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
@@ -26,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Registro duplicado (email ya registrado, debe retornar 409)
-POST http://localhost:8080/api/user/register
+POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
