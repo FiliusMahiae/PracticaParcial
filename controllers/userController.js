@@ -1,3 +1,4 @@
+// controllers/userController.js
 const User = require("../models/User");
 const { encrypt } = require("../utils/handlePassword");
 const { tokenSign } = require("../utils/handleJwt");
@@ -7,19 +8,15 @@ function generateVerificationCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-exports.register = async (req, res) => {
+const register = async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Verificar si el usuario ya existe
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(409).json({ error: "El usuario ya existe." });
+      return handleHttpError(res, "El usuario ya existe.", 409);
     }
-    // Cifrar la contraseña utilizando handlePassword
     const hashedPassword = await encrypt(password);
-    // Generar código de verificación
     const verificationCode = generateVerificationCode();
-    // Crear el usuario
     const user = new User({
       email,
       password: hashedPassword,
@@ -27,10 +24,8 @@ exports.register = async (req, res) => {
       attempts: process.env.MAX_ATTEMPTS || 3,
     });
     await user.save();
-    // Generar token JWT utilizando tokenSign
     const token = await tokenSign(user);
-    // Responder con los datos del usuario y el token
-    res.json({
+    return res.json({
       token,
       user: {
         _id: user._id,
@@ -41,6 +36,42 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    handleHttpError(res, "Error interno del servidor", 500);
+    return handleHttpError(res, "Error interno del servidor", 500);
   }
 };
+
+const validateEmail = async (req, res) => {
+  const { code } = req.body;
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return handleHttpError(res, "Usuario no encontrado", 404);
+    }
+    if (user.verificationCode === code) {
+      user.status = 1; // Usuario validado
+      user.verificationCode = null; // Opcional: limpiar el código
+      await user.save();
+      return res.json({ message: "Email validado correctamente" });
+    } else {
+      // Código incorrecto: decrementa los intentos
+      if (user.attempts > 0) {
+        user.attempts = user.attempts - 1;
+      }
+      await user.save();
+      if (user.attempts <= 0) {
+        return handleHttpError(res, "Número máximo de intentos alcanzado", 403);
+      }
+      return handleHttpError(
+        res,
+        `Código inválido. Quedan ${user.attempts} intentos`,
+        400
+      );
+    }
+  } catch (error) {
+    console.error(error);
+    return handleHttpError(res, "Error interno del servidor", 500);
+  }
+};
+
+module.exports = { register, validateEmail };
