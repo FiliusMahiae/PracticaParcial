@@ -1,35 +1,56 @@
-### Registro de usuario válido
+### Registro de usuario - Válido
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "email": "usuario1@ejemplo.com",
-  "password": "contraseñaSegura"
+  "email": "test@example.com",
+  "password": "password123"
 }
 
-### Registro de usuario con email inválido (debe retornar 422)
+### Registro de usuario - Email inválido (422)
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "email": "usuario1ejemplo.com",
-  "password": "contraseñaSegura"
+  "email": "invalid-email",
+  "password": "password123"
 }
 
-### Registro de usuario con contraseña corta (debe retornar 422)
+### Registro de usuario - Contraseña corta (422)
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "email": "usuario2@ejemplo.com",
-  "password": "12345"
+  "email": "test2@example.com",
+  "password": "short"
 }
 
-### Registro duplicado (email ya registrado, debe retornar 409)
+### Registro de usuario - Email duplicado (409)
 POST http://localhost:8080/api/users/register
 Content-Type: application/json
 
 {
-  "email": "usuario1@ejemplo.com",
-  "password": "otraContraseñaSegura"
+  "email": "test@example.com",
+  "password": "anotherpass123"
+}
+
+### Validar email - Código correcto (200)
+# Primero regístrate para obtener un JWT y un código de verificación.
+# Reemplaza <JWT_TOKEN> con el token obtenido y <VERIFICATION_CODE> con el código que se guardó en la base de datos.
+PUT http://localhost:8080/api/users/validation
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QxNzI2NzNlZjE4YTNjZDFiNGJiOTUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTc3OTU1OSwiZXhwIjoxNzQxNzg2NzU5fQ.BwsFy6-H_T2CpVVQanWPLpDohZu6OXXDFhekvPXi6C0
+Content-Type: application/json
+
+{
+  "code": "644943"
+}
+
+### Validar email - Código incorrecto (400 o 403 si se agotan intentos)
+# Reemplaza <JWT_TOKEN> con el token obtenido en el registro.
+PUT http://localhost:8080/api/users/validation
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QxNzJhZmRiYmZjZGMyOWIxNWY3ZTUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTc3OTYzMSwiZXhwIjoxNzQxNzg2ODMxfQ.DljmH34AyR-2S2nWIOtjYkmFLiZdP8coreX8aycTWTs
+Content-Type: application/json
+
+{
+  "code": "000000"
 }
