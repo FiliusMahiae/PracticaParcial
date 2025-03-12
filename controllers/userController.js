@@ -1,6 +1,7 @@
 const User = require("../models/User");
-const bcrypt = require("bcryptjs");
+const { encrypt } = require("../utils/handlePassword");
 const { tokenSign } = require("../utils/handleJwt");
+const { handleHttpError } = require("../utils/handleError");
 
 function generateVerificationCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -14,8 +15,8 @@ exports.register = async (req, res) => {
     if (existingUser) {
       return res.status(409).json({ error: "El usuario ya existe." });
     }
-    // Cifrar la contraseña
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // Cifrar la contraseña utilizando handlePassword
+    const hashedPassword = await encrypt(password);
     // Generar código de verificación
     const verificationCode = generateVerificationCode();
     // Crear el usuario
@@ -26,7 +27,7 @@ exports.register = async (req, res) => {
       attempts: process.env.MAX_ATTEMPTS || 3,
     });
     await user.save();
-    // Generar token JWT usando la función tokenSign
+    // Generar token JWT utilizando tokenSign
     const token = await tokenSign(user);
     // Responder con los datos del usuario y el token
     res.json({
@@ -40,6 +41,6 @@ exports.register = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error interno del servidor" });
+    handleHttpError(res, "Error interno del servidor", 500);
   }
 };
