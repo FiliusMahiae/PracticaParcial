@@ -19,7 +19,7 @@ exports.register = async (req, res) => {
     const hashedPassword = await encrypt(password);
     // Generar código de verificación
     const verificationCode = generateVerificationCode();
-    // Crear el usuario sin el campo status
+    // Crear el usuario
     const user = new User({
       email,
       password: hashedPassword,
@@ -29,12 +29,13 @@ exports.register = async (req, res) => {
     await user.save();
     // Generar token JWT utilizando tokenSign
     const token = await tokenSign(user);
-    // Responder con los datos del usuario y el token (sin status)
+    // Responder con los datos del usuario y el token
     res.json({
       token,
       user: {
         _id: user._id,
         email: user.email,
+        status: user.status,
         role: user.role,
       },
     });
