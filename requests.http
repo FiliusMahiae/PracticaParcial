@@ -1,0 +1,35 @@
+### Registro de usuario válido
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "email": "usuario1@ejemplo.com",
+  "password": "contraseñaSegura"
+}
+
+### Registro de usuario con email inválido (debe retornar 422)
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "email": "usuario1ejemplo.com",
+  "password": "contraseñaSegura"
+}
+
+### Registro de usuario con contraseña corta (debe retornar 422)
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "email": "usuario2@ejemplo.com",
+  "password": "12345"
+}
+
+### Registro duplicado (email ya registrado, debe retornar 409)
+POST http://localhost:8080/api/user/register
+Content-Type: application/json
+
+{
+  "email": "usuario1@ejemplo.com",
+  "password": "otraContraseñaSegura"
+}
