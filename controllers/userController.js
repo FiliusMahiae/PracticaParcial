@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const { tokenSign } = require("../utils/handleJwt");
 
 function generateVerificationCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -23,15 +23,11 @@ exports.register = async (req, res) => {
       email,
       password: hashedPassword,
       verificationCode,
-      attempts: process.env.MAX_ATTEMPTS,
+      attempts: process.env.MAX_ATTEMPTS || 3,
     });
     await user.save();
-    // Generar token JWT
-    const token = jwt.sign(
-      { _id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
+    // Generar token JWT usando la función tokenSign
+    const token = await tokenSign(user);
     // Responder con los datos del usuario y el token
     res.json({
       token,
