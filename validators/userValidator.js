@@ -1,4 +1,5 @@
-const { check, validationResult } = require("express-validator");
+const { check } = require("express-validator");
+const validatorResults = require("../utils/handleValidator");
 
 exports.validateUser = [
   check("email", "El email es obligatorio").not().isEmpty(),
@@ -7,11 +8,5 @@ exports.validateUser = [
   check("password", "La contraseña debe tener al menos 8 caracteres").isLength({
     min: 8,
   }),
-  (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-    next();
-  },
+  validatorResults,
 ];
