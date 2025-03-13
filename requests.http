@@ -90,3 +90,25 @@ Content-Type: application/json
   "email": "notanemail",
   "password": "password123"
 }
+
+### Actualizar datos personales (On boarding - Personal)
+PUT http://localhost:8080/api/users/onboarding/personal
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOTRhZGRhNWZjZjgzMDEwNDJjOTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1Mzg2OSwiZXhwIjoxNzQxODYxMDY5fQ.YF8bKh4YYTgDpOZJc2EJI9XvN-qfpfs-OvVSX-5PtbE
+Content-Type: application/json
+
+{
+  "nombre": "Juan",
+  "apellidos": "Pérez",
+  "nif": "12345678A"
+}
+
+### Actualizar datos de la compañía (On boarding - Company)
+PATCH http://localhost:8080/api/users/onboarding/company
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOTRhZGRhNWZjZjgzMDEwNDJjOTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1Mzg2OSwiZXhwIjoxNzQxODYxMDY5fQ.YF8bKh4YYTgDpOZJc2EJI9XvN-qfpfs-OvVSX-5PtbE
+Content-Type: application/json
+
+{
+  "companyName": "Empresa S.A.",
+  "cif": "B12345678",
+  "direccion": "Calle Falsa 123"
+}
