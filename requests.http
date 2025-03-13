@@ -38,11 +38,11 @@ Content-Type: application/json
 # Primero regístrate para obtener un JWT y un código de verificación.
 # Reemplaza <JWT_TOKEN> con el token obtenido y <VERIFICATION_CODE> con el código que se guardó en la base de datos.
 PUT http://localhost:8080/api/users/validation
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOTRhZGRhNWZjZjgzMDEwNDJjOTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1Mzg2OSwiZXhwIjoxNzQxODYxMDY5fQ.YF8bKh4YYTgDpOZJc2EJI9XvN-qfpfs-OvVSX-5PtbE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOWQ3YzM4N2U3NmYxOTU5ZTg5MmUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1NjEyNCwiZXhwIjoxNzQxODYzMzI0fQ.icVmuvl-83-GcnrkiJv_CGCgN1BCpnRpGlpy6I9rCe8
 Content-Type: application/json
 
 {
-  "code": "976064"
+  "code": "164694"
 }
 
 ### Validar email - Código incorrecto (400 o 403 si se agotan intentos)
@@ -93,7 +93,7 @@ Content-Type: application/json
 
 ### Actualizar datos personales (On boarding - Personal)
 PUT http://localhost:8080/api/users/onboarding/personal
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOTRhZGRhNWZjZjgzMDEwNDJjOTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1Mzg2OSwiZXhwIjoxNzQxODYxMDY5fQ.YF8bKh4YYTgDpOZJc2EJI9XvN-qfpfs-OvVSX-5PtbE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOWQ3YzM4N2U3NmYxOTU5ZTg5MmUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1NjE2MCwiZXhwIjoxNzQxODYzMzYwfQ.WPYyaNjcCkWztEI4iv4qJj0OaC_kMbbTEh79bQSCndI
 Content-Type: application/json
 
 {
@@ -104,7 +104,7 @@ Content-Type: application/json
 
 ### Actualizar datos de la compañía (On boarding - Company)
 PATCH http://localhost:8080/api/users/onboarding/company
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOTRhZGRhNWZjZjgzMDEwNDJjOTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1Mzg2OSwiZXhwIjoxNzQxODYxMDY5fQ.YF8bKh4YYTgDpOZJc2EJI9XvN-qfpfs-OvVSX-5PtbE
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOWQ3YzM4N2U3NmYxOTU5ZTg5MmUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1NjE2MCwiZXhwIjoxNzQxODYzMzYwfQ.WPYyaNjcCkWztEI4iv4qJj0OaC_kMbbTEh79bQSCndI
 Content-Type: application/json
 
 {
@@ -112,3 +112,16 @@ Content-Type: application/json
   "cif": "B12345678",
   "direccion": "Calle Falsa 123"
 }
+
+### Actualizar logo
+PATCH http://localhost:8080/api/users/logo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOWQ3YzM4N2U3NmYxOTU5ZTg5MmUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1NjI5MCwiZXhwIjoxNzQxODYzNDkwfQ.-ura45dwrEenOWAiJP-nMVaTlKlbBsAKqOVZAnjHsbI
+Content-Type: multipart/form-data; boundary=---011000010111000001101001
+
+-----011000010111000001101001
+Content-Disposition: form-data; name="image"; filename="logo.png"
+Content-Type: image/png
+
+< ./Curriculum2024.pdf
+-----011000010111000001101001--
+
