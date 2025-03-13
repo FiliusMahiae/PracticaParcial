@@ -38,11 +38,11 @@ Content-Type: application/json
 # Primero regístrate para obtener un JWT y un código de verificación.
 # Reemplaza <JWT_TOKEN> con el token obtenido y <VERIFICATION_CODE> con el código que se guardó en la base de datos.
 PUT http://localhost:8080/api/users/validation
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QxNzI2NzNlZjE4YTNjZDFiNGJiOTUiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTc3OTU1OSwiZXhwIjoxNzQxNzg2NzU5fQ.BwsFy6-H_T2CpVVQanWPLpDohZu6OXXDFhekvPXi6C0
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2N2QyOTRhZGRhNWZjZjgzMDEwNDJjOTkiLCJyb2xlIjoidXNlciIsImlhdCI6MTc0MTg1Mzg2OSwiZXhwIjoxNzQxODYxMDY5fQ.YF8bKh4YYTgDpOZJc2EJI9XvN-qfpfs-OvVSX-5PtbE
 Content-Type: application/json
 
 {
-  "code": "644943"
+  "code": "976064"
 }
 
 ### Validar email - Código incorrecto (400 o 403 si se agotan intentos)
@@ -53,4 +53,40 @@ Content-Type: application/json
 
 {
   "code": "000000"
+}
+
+### Login - Válido
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### Login - Email inexistente
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "noexiste@example.com",
+  "password": "password123"
+}
+
+### Login - Contraseña incorrecta
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "wrongpassword"
+}
+
+### Login - Datos inválidos (ejemplo: email mal formado)
+POST http://localhost:8080/api/users/login
+Content-Type: application/json
+
+{
+  "email": "notanemail",
+  "password": "password123"
 }
