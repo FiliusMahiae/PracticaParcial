@@ -3,6 +3,7 @@ const User = require("../models/User");
 const { encrypt, compare } = require("../utils/handlePassword");
 const { tokenSign } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
+const uploadToPinata = require("../utils/handleUploadIPFS");
 
 function generateVerificationCode() {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -165,10 +166,37 @@ const updateCompanyData = async (req, res) => {
   }
 };
 
+const updateLogo = async (req, res) => {
+  try {
+    const userId = req.user._id; // Obtenemos el usuario del token
+    if (!req.file) {
+      return handleHttpError(res, "No se ha proporcionado ninguna imagen", 400);
+    }
+    const fileBuffer = req.file.buffer;
+    const fileName = req.file.originalname;
+    const pinataResponse = await uploadToPinata(fileBuffer, fileName);
+    const ipfsFile = pinataResponse.IpfsHash;
+    const ipfs = `https://${process.env.PINATA_GATEWAY_URL}/ipfs/${ipfsFile}`;
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { logo: ipfs },
+      { new: true }
+    );
+    return res.json({
+      message: "Logo actualizado correctamente",
+      logo: updatedUser.logo,
+    });
+  } catch (err) {
+    console.error(err);
+    return handleHttpError(res, "ERROR_UPLOAD_LOGO", 500);
+  }
+};
+
 module.exports = {
   register,
   validateEmail,
   login,
   updatePersonalData,
   updateCompanyData,
+  updateLogo,
 };
