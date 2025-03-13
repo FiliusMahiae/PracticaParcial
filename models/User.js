@@ -5,7 +5,7 @@ const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   status: { type: Number, default: 0 }, // 0: no validado, 1: validado
-  role: { type: String, default: "user" }, // Por ejemplo, "user" o "autonomo"
+  role: { type: String, default: "user" }, // Ej: "user" o "autonomo"
   verificationCode: { type: String },
   attempts: { type: Number, default: 3 },
   // Datos personales
@@ -16,6 +16,8 @@ const UserSchema = new Schema({
   companyName: { type: String, default: "" },
   cif: { type: String, default: "" },
   direccion: { type: String, default: "" },
+  // Logo
+  logo: { type: String, default: "" },
 });
 
 module.exports = mongoose.model("User", UserSchema);
