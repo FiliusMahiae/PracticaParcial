@@ -101,4 +101,74 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, validateEmail, login };
+const updatePersonalData = async (req, res) => {
+  const { nombre, apellidos, nif } = req.body;
+  const userId = req.user._id;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { nombre, apellidos, nif },
+      { new: true }
+    );
+    if (!updatedUser) {
+      return handleHttpError(res, "Usuario no encontrado", 404);
+    }
+    return res.json({
+      message: "Datos personales actualizados correctamente",
+      user: {
+        _id: updatedUser._id,
+        nombre: updatedUser.nombre,
+        apellidos: updatedUser.apellidos,
+        nif: updatedUser.nif,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return handleHttpError(res, "Error interno del servidor", 500);
+  }
+};
+
+const updateCompanyData = async (req, res) => {
+  const { companyName, cif, direccion } = req.body;
+  const userId = req.user._id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return handleHttpError(res, "Usuario no encontrado", 404);
+    }
+    // Si el usuario es autónomo, se copian sus datos personales
+    if (user.role === "autonomo") {
+      user.companyName = `${user.nombre || ""} ${user.apellidos || ""}`.trim();
+      user.cif = user.nif;
+      if (direccion) {
+        user.direccion = direccion;
+      }
+    } else {
+      // En otro caso, se actualizan con los datos proporcionados
+      user.companyName = companyName;
+      user.cif = cif;
+      user.direccion = direccion;
+    }
+    await user.save();
+    return res.json({
+      message: "Datos de la compañía actualizados correctamente",
+      user: {
+        _id: user._id,
+        companyName: user.companyName,
+        cif: user.cif,
+        direccion: user.direccion,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return handleHttpError(res, "Error interno del servidor", 500);
+  }
+};
+
+module.exports = {
+  register,
+  validateEmail,
+  login,
+  updatePersonalData,
+  updateCompanyData,
+};
