@@ -1,4 +1,3 @@
-// routes/user.js
 const express = require("express");
 const router = express.Router();
 const { validateUser } = require("../validators/userValidator");
@@ -12,8 +11,10 @@ const {
   login,
   updatePersonalData,
   updateCompanyData,
+  updateLogo,
 } = require("../controllers/userController");
 const auth = require("../middleware/auth");
+const { uploadMiddlewareMemory } = require("../utils/handleStorage");
 
 // Registro de usuario
 router.post("/register", validateUser, register);
@@ -39,5 +40,9 @@ router.patch(
   validateCompanyData,
   updateCompanyData
 );
+
+// Actualización del logo (PATCH)
+// Se espera el campo "image" en el formulario, que se procesa con multer en memoria.
+router.patch("/logo", auth, uploadMiddlewareMemory.single("image"), updateLogo);
 
 module.exports = router;
