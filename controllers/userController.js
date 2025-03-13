@@ -1,6 +1,6 @@
 // controllers/userController.js
 const User = require("../models/User");
-const { encrypt } = require("../utils/handlePassword");
+const { encrypt, compare } = require("../utils/handlePassword");
 const { tokenSign } = require("../utils/handleJwt");
 const { handleHttpError } = require("../utils/handleError");
 
@@ -74,4 +74,31 @@ const validateEmail = async (req, res) => {
   }
 };
 
-module.exports = { register, validateEmail };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return handleHttpError(res, "Credenciales incorrectas", 400);
+    }
+    const isMatch = await compare(password, user.password);
+    if (!isMatch) {
+      return handleHttpError(res, "Credenciales incorrectas", 400);
+    }
+    const token = await tokenSign(user);
+    return res.json({
+      token,
+      user: {
+        _id: user._id,
+        email: user.email,
+        status: user.status,
+        role: user.role,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    return handleHttpError(res, "Error interno del servidor", 500);
+  }
+};
+
+module.exports = { register, validateEmail, login };
