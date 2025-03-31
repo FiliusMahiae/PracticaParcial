@@ -5,21 +5,37 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  status: { type: Number, default: 0 }, // 0: no validado, 1: validado
+  status: { type: Number, default: 0 },
   role: { type: String, default: "user" },
   verificationCode: { type: String },
   attempts: { type: Number, default: 3 },
+
   // Datos personales
-  nombre: { type: String, default: "" },
-  apellidos: { type: String, default: "" },
+  name: { type: String, default: "" },
+  surnames: { type: String, default: "" },
   nif: { type: String, default: "" },
+
+  // Dirección
+  address: {
+    street: { type: String, default: "" },
+    number: { type: Number, default: null },
+    postal: { type: Number, default: null },
+    city: { type: String, default: "" },
+    province: { type: String, default: "" },
+  },
+
   // Datos de la compañía
-  companyName: { type: String, default: "" },
-  cif: { type: String, default: "" },
-  direccion: { type: String, default: "" },
-  // Logo
+  company: {
+    name: { type: String, default: "" },
+    cif: { type: String, default: "" },
+    street: { type: String, default: "" },
+    number: { type: Number, default: null },
+    postal: { type: Number, default: null },
+    city: { type: String, default: "" },
+    province: { type: String, default: "" },
+  },
+
   logo: { type: String, default: "" },
-  // Recuperación de contraseña
   passwordRecoveryCode: { type: String, default: "" },
 });
 
