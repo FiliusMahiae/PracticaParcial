@@ -104,24 +104,39 @@ const login = async (req, res) => {
 };
 
 const updatePersonalData = async (req, res) => {
-  const { nombre, apellidos, nif } = req.body;
+  const { nombre, apellidos, nif, address } = req.body;
   const userId = req.user._id;
+
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { nombre, apellidos, nif },
-      { new: true }
-    );
-    if (!updatedUser) {
+    const user = await User.findById(userId);
+    if (!user) {
       return handleHttpError(res, "Usuario no encontrado", 404);
     }
+
+    user.name = nombre;
+    user.surnames = apellidos;
+    user.nif = nif;
+
+    if (address) {
+      user.address = {
+        street: address.street || "",
+        number: address.number || null,
+        postal: address.postal || null,
+        city: address.city || "",
+        province: address.province || "",
+      };
+    }
+
+    await user.save();
+
     return res.json({
       message: "Datos personales actualizados correctamente",
       user: {
-        _id: updatedUser._id,
-        nombre: updatedUser.nombre,
-        apellidos: updatedUser.apellidos,
-        nif: updatedUser.nif,
+        _id: user._id,
+        name: user.name,
+        surnames: user.surnames,
+        nif: user.nif,
+        address: user.address,
       },
     });
   } catch (error) {
@@ -131,35 +146,43 @@ const updatePersonalData = async (req, res) => {
 };
 
 const updateCompanyData = async (req, res) => {
-  const { companyName, cif, direccion } = req.body;
+  const { companyName, cif, street, number, postal, city, province } = req.body;
+
   const userId = req.user._id;
+
   try {
     const user = await User.findById(userId);
     if (!user) {
       return handleHttpError(res, "Usuario no encontrado", 404);
     }
-    // Si el usuario es autónomo, se copian sus datos personales
+
     if (user.role === "autonomo") {
-      user.companyName = `${user.nombre || ""} ${user.apellidos || ""}`.trim();
-      user.cif = user.nif;
-      if (direccion) {
-        user.direccion = direccion;
-      }
+      user.company = {
+        name: `${user.name || ""} ${user.surnames || ""}`.trim(),
+        cif: user.nif,
+        street: user.address?.street || "",
+        number: user.address?.number || null,
+        postal: user.address?.postal || null,
+        city: user.address?.city || "",
+        province: user.address?.province || "",
+      };
     } else {
-      // En otro caso, se actualizan con los datos proporcionados
-      user.companyName = companyName;
-      user.cif = cif;
-      user.direccion = direccion;
+      user.company = {
+        name: companyName,
+        cif,
+        street,
+        number,
+        postal,
+        city,
+        province,
+      };
     }
+
     await user.save();
+
     return res.json({
       message: "Datos de la compañía actualizados correctamente",
-      user: {
-        _id: user._id,
-        companyName: user.companyName,
-        cif: user.cif,
-        direccion: user.direccion,
-      },
+      company: user.company,
     });
   } catch (error) {
     console.error(error);
